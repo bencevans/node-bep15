@@ -131,6 +131,39 @@ var readAnnounceRequest = function(packet) {
 // Anounce: Responce
 //
 
+var writeAnnounceResponce = function(opts) {
+
+  var packet = new Buffer(20 + (opts.peers * 12));
+
+  // action
+  packet.writeInt32BE(1, 0);
+  // transaction_id
+  packet.writeInt32BE(opts.transactionId, 4);
+  // interval
+  packet.writeInt32BE(opts.interval, 8);
+  // leechers
+  packet.writeInt32BE(opts.leechers, 12);
+  // seeders
+  packet.writeInt32BE(opts.seeders, 16);
+
+  for (var i = 0; i < opts.peers.length; i++) {
+    var ip = opts.peers[i];
+    var split = ip.split('.');
+    var ipBuf = new Buffer(4);
+    for (var place = 0; place < split.length; i++) {
+      var num = parseInt(num, 10);
+      ipBuf.writeInt8BE(split[place], place);
+    }
+    var portBuf = new Buffer(2).writeInt16BE(opts.peers[i].port, 0);
+
+    ipBuf.copy(packet, 20 + (i*6));
+    portBuf.copy(packet, 24 + (i*6));
+  }
+
+  return packet;
+
+};
+
 var readAnnounceResponce = function(packet) {
   var action = packet.readInt32BE();
   var transactionId = packet.readInt32BE(4);
@@ -290,6 +323,7 @@ module.exports.readConnectResponse = readConnectResponse;
 module.exports.writeAnnounceRequest = writeAnnounceRequest;
 module.exports.readAnnounceRequest = readAnnounceRequest;
 
+module.exports.writeAnnounceResponce = writeAnnounceResponce;
 module.exports.readAnnounceResponce = readAnnounceResponce;
 
 module.exports.writeScrapeRequest = writeScrapeRequest;
