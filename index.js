@@ -53,9 +53,9 @@ var writeConnectResponse = function(opts) {
 
 var readConnectResponse = function(packet) {
 
-  var action = packet.readInt32BE();
+  var action = packet.readInt32BE(0);
   var transactionId = packet.readInt32BE(4);
-  var connectionId = packet.slice(8, 2);
+  var connectionId = packet.slice(8, 10);
 
   return {
     action:action,
@@ -134,18 +134,18 @@ var readAnnounceResponce = function(packet) {
 
 var writeScrapeRequest = function (opts) {
 
-  var packet = new Buffer(16 + ((typeof opts.infoHash == 'array') ? opts.infoHash.length : 1) * 20);
+  var packet = new Buffer(16 + ((typeof opts.torrents == 'array') ? opts.torrents.length : 1) * 20);
 
   opts.connectionId.copy(packet);
   packet.writeInt32BE(2, 8);
   opts.transactionId.copy(packet, 12);
 
-  if(typeof opts.infoHash == 'array') {
-    for (var i = opts.infoHash.length - 1; i >= 0; i--) {
-      opts.infoHash[i].copy(packet, 16 + (20*i));
+  if(typeof opts.torrents == 'object') {
+    for (var i = opts.torrents.length - 1; i >= 0; i--) {
+      opts.torrents[i].copy(packet, 16 + (20*i));
     }
   } else {
-    opts.infoHash.copy(packet, 16);
+    opts.torrents.copy(packet, 16);
   }
 
   return packet;
@@ -157,23 +157,72 @@ var readScrapeRequest = function (packet) {
   var connectionId = packet.slice(0, 8);
   var action = packet.readInt32BE(8);
   var transactionId = packet.slice(12, 16);
-  var infoHash = [];
+  var torrents = [];
 
-  var infoHashCount = (packet.length - 16) / 20;
+  var torrentCount = (packet.length - 16) / 20;
 
-  for (var i = 0; i < infoHashCount; i++) {
-    infoHash.push(packet.toString('hex', 16+(i*20), 16+(i*20) + 20));
+  for (var i = 0; i < torrentCount; i++) {
+    torrents.push(packet.toString('hex', 16+(i*20), 16+(i*20) + 20));
   }
 
   return {
     connectionId:connectionId,
     action:action,
     transactionId:transactionId,
-    infoHash:infoHash
+    torrents:torrents
   };
 
 };
 
+//
+// Scrape: Responce
+//
+
+var writeScrapeResponce = function (opts) {
+
+  var packet = new Buffer(8 + (opts.torrents.length * 12));
+
+  // action
+  packet.writeInt32BE(2, 0);
+  // transaction_id
+  opts.transactionId.copy(packet, 4);
+
+  // torrents
+  for(var i in opts.torrents) {
+    // seeders
+    packet.writeInt32BE(opts.torrents[i].seeders, 8 + (12 * i));
+    // completed
+    packet.writeInt32BE(opts.torrents[i].completed, 12 + (12 * i));
+    // leechers
+    packet.writeInt32BE(opts.torrents[i].leechers, 16 + (12 * i));
+  }
+
+  return packet;
+
+};
+
+var readScrapeResponce = function (packet) {
+
+  var action = packet.readInt32BE(0);
+  var transactionId = packet.slice(4, 8);
+
+  // torrents
+  var torrents = [];
+  var torrentCount = (packet.length - 8) / 12;
+  for(var i = 0; i < torrentCount; i++) {
+    var seeders = packet.readInt32BE(8 + (12 * i));
+    var completed = packet.readInt32BE(16 + (12 * i));
+    var leechers = packet.readInt32BE(16 + (12 * i));
+    torrents.push({seeders:seeders, completed:completed, leechers:leechers});
+  }
+
+  return {
+    actions:action,
+    transactionId:transactionId,
+    torrents:torrents
+  };
+
+};
 
 //
 // Misc
@@ -222,6 +271,10 @@ module.exports.readAnnounceResponce = readAnnounceResponce;
 
 module.exports.writeScrapeRequest = writeScrapeRequest;
 module.exports.readScrapeRequest = readScrapeRequest;
+
+module.exports.writeScrapeResponce = writeScrapeResponce;
+module.exports.readScrapeResponce = readScrapeResponce;
+
 
 module.exports.readErrorResponce = readErrorResponce;
 
