@@ -1,0 +1,19 @@
+{
+  "name": "bep15",
+  "version": "0.0.0",
+  "description": "read and write UDP (BEP 15) tracker packets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "keywords": [
+    "torrent",
+    "bittorrent",
+    "bep",
+    "bep15",
+    "udp",
+    "tracker"
+  ],
+  "author": "Ben Evans <ben@bensbit.co.uk> (http://bensbit.co.uk)"
+}
