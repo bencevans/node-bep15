@@ -105,6 +105,28 @@ var writeAnnounceRequest = function(opts) {
 
 };
 
+var readAnnounceRequest = function(packet) {
+
+  var output = {};
+
+  output.connectionId = packet.slice(0, 7);
+  output.action = packet.readInt32BE(8);
+  output.transactionId = packet.readInt32BE(12);
+  output.infoHash = packet.slice(16, 35).toString('hex');
+  output.peerId = packet.slice(36, 55);
+  output.downloaded = packet.readInt32BE(56);
+  output.left = packet.readInt32BE(64);
+  output.uploaded = packet.readInt32BE(72);
+  output.event = packet.readInt32BE(80);
+  output.ipAddress = 0;
+  output.key = packet.readInt32BE(88);
+  output.numWant = packet.readInt32BE(92);
+  //output.port = packet.readInt32BE(96);
+
+  return output;
+
+};
+
 //
 // Anounce: Responce
 //
@@ -266,6 +288,7 @@ module.exports.writeConnectResponse = writeConnectResponse;
 module.exports.readConnectResponse = readConnectResponse;
 
 module.exports.writeAnnounceRequest = writeAnnounceRequest;
+module.exports.readAnnounceRequest = readAnnounceRequest;
 
 module.exports.readAnnounceResponce = readAnnounceResponce;
 
