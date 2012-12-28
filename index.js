@@ -137,15 +137,15 @@ var writeScrapeRequest = function (opts) {
   var packet = new Buffer(16 + ((typeof opts.infoHash == 'array') ? opts.infoHash.length : 1) * 20);
 
   opts.connectionId.copy(packet);
-  opts.action.copy(packet, 8);
-  transaction_id.copy(packet, 12);
+  packet.writeInt32BE(2, 8);
+  opts.transactionId.copy(packet, 12);
 
   if(typeof opts.infoHash == 'array') {
     for (var i = opts.infoHash.length - 1; i >= 0; i--) {
-      info_hash.copy(packet, 16 + (20*i));
+      opts.infoHash[i].copy(packet, 16 + (20*i));
     }
   } else {
-    info_hash.copy(packet, 16);
+    opts.infoHash.copy(packet, 16);
   }
 
   return packet;
