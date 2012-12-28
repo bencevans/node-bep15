@@ -152,6 +152,29 @@ var writeScrapeRequest = function (opts) {
 
 };
 
+var readScrapeRequest = function (packet) {
+
+  var connectionId = packet.slice(0, 8);
+  var action = packet.readInt32BE(8);
+  var transactionId = packet.slice(12, 16);
+  var infoHash = [];
+
+  var infoHashCount = (packet.length - 16) / 20;
+
+  for (var i = 0; i < infoHashCount; i++) {
+    infoHash.push(packet.toString('hex', 16+(i*20), 16+(i*20) + 20));
+  }
+
+  return {
+    connectionId:connectionId,
+    action:action,
+    transactionId:transactionId,
+    infoHash:infoHash
+  };
+
+};
+
+
 //
 // Misc
 //
@@ -198,6 +221,7 @@ module.exports.writeAnnounceRequest = writeAnnounceRequest;
 module.exports.readAnnounceResponce = readAnnounceResponce;
 
 module.exports.writeScrapeRequest = writeScrapeRequest;
+module.exports.readScrapeRequest = readScrapeRequest;
 
 module.exports.readErrorResponce = readErrorResponce;
 
