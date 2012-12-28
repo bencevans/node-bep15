@@ -128,7 +128,7 @@ var readAnnounceRequest = function(packet) {
 };
 
 //
-// Anounce: Responce
+// Announce: Responce
 //
 
 var writeAnnounceResponce = function(opts) {
