@@ -175,7 +175,13 @@ var isResponceError = function(packet) {
 
 };
 
-var getAction = function(packet) {
+var getRequestAction = function(packet) {
+
+  return packet.readInt32BE(8);
+
+};
+
+var getResponceAction = function(packet) {
 
   return packet.readInt32BE(0);
 
@@ -196,4 +202,5 @@ module.exports.writeScrapeRequest = writeScrapeRequest;
 module.exports.readErrorResponce = readErrorResponce;
 
 module.exports.isResponceError = isResponceError;
-module.exports.getAction = getAction;
+module.exports.getRequestAction = getRequestAction;
+module.exports.getResponceAction = getResponceAction;
