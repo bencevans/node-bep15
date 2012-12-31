@@ -1,4 +1,12 @@
 
+var ipport = require('ipport');
+
+function bufferEach (buffer, objectLength, offset, eachCb) {
+  for (var i = offset; i <= (buffer.length - offset / objectLength) - 1; i = i + objectLength) {
+    eachCb(buffer.slice(i, i + objectLength));
+  }
+}
+
 //
 // Connect: Request
 //
@@ -133,7 +141,7 @@ var readAnnounceRequest = function(packet) {
 
 var writeAnnounceResponce = function(opts) {
 
-  var packet = new Buffer(20 + (opts.peers * 12));
+  var packet = new Buffer(20 + (opts.peers.length * 12));
 
   // action
   packet.writeInt32BE(1, 0);
@@ -148,16 +156,8 @@ var writeAnnounceResponce = function(opts) {
 
   for (var i = 0; i < opts.peers.length; i++) {
     var ip = opts.peers[i];
-    var split = ip.split('.');
-    var ipBuf = new Buffer(4);
-    for (var place = 0; place < split.length; i++) {
-      var num = parseInt(num, 10);
-      ipBuf.writeInt8BE(split[place], place);
-    }
-    var portBuf = new Buffer(2).writeInt16BE(opts.peers[i].port, 0);
-
-    ipBuf.copy(packet, 20 + (i*6));
-    portBuf.copy(packet, 24 + (i*6));
+    var ipBuf = ipport.toBuffer(ip);
+    ipBuf.copy(packet, 24 + (i*6));
   }
 
   return packet;
@@ -165,12 +165,16 @@ var writeAnnounceResponce = function(opts) {
 };
 
 var readAnnounceResponce = function(packet) {
-  var action = packet.readInt32BE();
+  var action = packet.readInt32BE(0);
   var transactionId = packet.readInt32BE(4);
   var interval = packet.readInt32BE(8);
   var leechers = packet.readInt32BE(12);
   var seeders = packet.readInt32BE(16);
   var peers = [];
+
+  bufferEach(packet, 6, 20, function(buf) {
+    peers.push(ipport.toObject(buf));
+  });
 
   return {
     action:action,
@@ -178,7 +182,7 @@ var readAnnounceResponce = function(packet) {
     interval:interval,
     leechers:leechers,
     seeders:seeders,
-    peersaction:peersaction
+    peers:peers
   };
 
 };

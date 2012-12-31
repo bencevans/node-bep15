@@ -1,6 +1,6 @@
 
 var assert = require('assert');
-var packetMachine = require('./comms');
+var packetMachine = require('./');
 
 describe('connect', function() {
 
@@ -14,7 +14,7 @@ describe('connect', function() {
     });
 
     it('should be at least 16 bytes', function () {
-      assert.ok(packet.length >= 16);
+      assert.ok(request.length >= 16);
     });
 
     it('should read out equal transactionId from write to read', function () {
@@ -41,7 +41,23 @@ describe('announce', function() {
   describe('responce', function() {
     var packet;
     it('should be at least x bytes');
-    it('should read what was written');
+    it('should read what was written', function() {
+      var input = {
+        transactionId: 21,
+        interval: 20,
+        leechers: 10,
+        seeders: 10,
+        peers: [{
+          address: '10.10.10.10',
+          port: 3030
+        }, {
+          address: '11.11.11.11',
+          port: 8765
+        }]
+      };
+      var packet = packetMachine.writeAnnounceResponce(input);
+      var output = packetMachine.readAnnounceResponce(packet);
+    });
   });
 });
 

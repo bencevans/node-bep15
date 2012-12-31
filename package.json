@@ -15,5 +15,11 @@
     "udp",
     "tracker"
   ],
-  "author": "Ben Evans <ben@bensbit.co.uk> (http://bensbit.co.uk)"
+  "author": "Ben Evans <ben@bensbit.co.uk> (http://bensbit.co.uk)",
+  "dependencies": {
+    "ipport": "~0.1.0"
+  },
+  "devDependencies": {
+    "mocha": "~1.7.4"
+  }
 }
