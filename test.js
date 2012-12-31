@@ -40,8 +40,7 @@ describe('announce', function() {
   });
   describe('responce', function() {
     var packet;
-    it('should be at least x bytes');
-    it('should read what was written', function() {
+    it('should write a packet as suspected', function() {
       var input = {
         transactionId: 21,
         interval: 20,
@@ -55,7 +54,13 @@ describe('announce', function() {
           port: 8765
         }]
       };
-      var packet = packetMachine.writeAnnounceResponce(input);
+      packet = packetMachine.writeAnnounceResponce(input);
+    });
+    it('should be at least 20 bytes', function() {
+      assert.ok((packet.length >= 20) ? true : false);
+    });
+    it('should read what was written', function() {
+
       var output = packetMachine.readAnnounceResponce(packet);
     });
   });

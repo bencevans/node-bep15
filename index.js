@@ -1,5 +1,13 @@
 
+//
+// Requires
+//
+
 var ipport = require('ipport');
+
+//
+// Helpers
+//
 
 function bufferEach (buffer, objectLength, offset, eachCb) {
   for (var i = offset; i <= (buffer.length - offset / objectLength) - 1; i = i + objectLength) {
