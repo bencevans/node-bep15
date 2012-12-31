@@ -4,7 +4,7 @@
   "description": "read and write UDP (BEP 15) tracker packets",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "repository": "",
   "keywords": [
