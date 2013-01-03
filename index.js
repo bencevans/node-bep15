@@ -88,18 +88,25 @@ var readConnectResponse = function(packet) {
 var writeAnnounceRequest = function(opts) {
 
   var connection_id = opts.connectionId;
-  var action = new Buffer(4).writeInt32BE(1);
-  var transaction_id = new Buffer(4).writeInt32BE(transactionId);
+  var action = new Buffer(4);
+  action.writeInt32BE(1, 0);
+  var transaction_id = new Buffer(4);
+  transaction_id.writeInt32BE(opts.transactionId, 0);
   var info_hash = new Buffer(opts.infoHash);
-  var peer_id = new Buffer(opts.peerId);
+  var peer_id = new Buffer(20);
+  peer_id.write(opts.peerId, 0, opts.peerId.length, 'hex');
   var downloaded = opts.downloaded;
   var left = opts.left;
   var uploaded = opts.uploaded;
-  var event = opts.event || new Buffer(4).writeInt32BE(0);
-  var ip_address = 0;
-  var key = opts.key;
-  var num_want = new Buffer(4).writeInt32BE(-1);
-  var port = new Buffer(2).writeInt16BE(opts.port);
+  var event = new Buffer(4);
+  event.writeInt32BE(opts.event || 0, 0);
+  var ip_address = new Buffer(4);
+  var key = new Buffer(4);
+  key.writeInt32BE(opts.key, 0);
+  var num_want = new Buffer(4);
+  num_want.writeInt32BE(opts.numWant || -1, 0);
+  var port = new Buffer(2);
+  port.writeInt16BE(opts.port, 0);
 
   var packet = new Buffer(98);
 
@@ -125,14 +132,14 @@ var readAnnounceRequest = function(packet) {
 
   var output = {};
 
-  output.connectionId = packet.slice(0, 7);
+  output.connectionId = packet.slice(0, 8);
   output.action = packet.readInt32BE(8);
   output.transactionId = packet.readInt32BE(12);
-  output.infoHash = packet.slice(16, 35).toString('hex');
-  output.peerId = packet.slice(36, 55);
-  output.downloaded = packet.readInt32BE(56);
-  output.left = packet.readInt32BE(64);
-  output.uploaded = packet.readInt32BE(72);
+  output.infoHash = packet.slice(16, 36).toString('hex');
+  output.peerId = packet.slice(36, 56).toString('hex');
+  output.downloaded = packet.slice(56, 64);
+  output.left = packet.slice(64, 72);
+  output.uploaded = packet.slice(72, 80);
   output.event = packet.readInt32BE(80);
   output.ipAddress = 0;
   output.key = packet.readInt32BE(88);
