@@ -49,7 +49,7 @@ var readConnectRequest = function(packet) {
 };
 
 //
-// Connect: Responce
+// Connect: Response
 //
 
 var writeConnectResponse = function(opts) {
@@ -151,10 +151,10 @@ var readAnnounceRequest = function(packet) {
 };
 
 //
-// Announce: Responce
+// Announce: Response
 //
 
-var writeAnnounceResponce = function(opts) {
+var writeAnnounceResponse = function(opts) {
 
   var packet = new Buffer(20 + (opts.peers.length * 12));
 
@@ -179,7 +179,7 @@ var writeAnnounceResponce = function(opts) {
 
 };
 
-var readAnnounceResponce = function(packet) {
+var readAnnounceResponse = function(packet) {
   var action = packet.readInt32BE(0);
   var transactionId = packet.readInt32BE(4);
   var interval = packet.readInt32BE(8);
@@ -249,10 +249,10 @@ var readScrapeRequest = function (packet) {
 };
 
 //
-// Scrape: Responce
+// Scrape: Response
 //
 
-var writeScrapeResponce = function (opts) {
+var writeScrapeResponse = function (opts) {
 
   var packet = new Buffer(8 + (opts.torrents.length * 12));
 
@@ -275,7 +275,7 @@ var writeScrapeResponce = function (opts) {
 
 };
 
-var readScrapeResponce = function (packet) {
+var readScrapeResponse = function (packet) {
 
   var action = packet.readInt32BE(0);
   var transactionId = packet.slice(4, 8);
@@ -302,7 +302,7 @@ var readScrapeResponce = function (packet) {
 // Misc
 //
 
-var writeErrorResponce = function(opts) {
+var writeErrorResponse = function(opts) {
 
   var message = new Buffer(opts.message);
 
@@ -315,7 +315,7 @@ var writeErrorResponce = function(opts) {
   return packet;
 };
 
-var readErrorResponce = function(packet) {
+var readErrorResponse = function(packet) {
 
   var action = packet.readInt32BE();
   var transactionId = packet.readInt32BE(4);
@@ -328,7 +328,7 @@ var readErrorResponce = function(packet) {
   };
 };
 
-var isResponceError = function(packet) {
+var isResponseError = function(packet) {
 
   return (packet.readInt32BE() == 3) ? true : false;
 
@@ -346,7 +346,7 @@ var getRequestPeerId = function(packet) {
 
 };
 
-var getResponceAction = function(packet) {
+var getResponseAction = function(packet) {
 
   return packet.readInt32BE(0);
 
@@ -361,19 +361,19 @@ module.exports.readConnectResponse = readConnectResponse;
 module.exports.writeAnnounceRequest = writeAnnounceRequest;
 module.exports.readAnnounceRequest = readAnnounceRequest;
 
-module.exports.writeAnnounceResponce = writeAnnounceResponce;
-module.exports.readAnnounceResponce = readAnnounceResponce;
+module.exports.writeAnnounceResponse = writeAnnounceResponse;
+module.exports.readAnnounceResponse = readAnnounceResponse;
 
 module.exports.writeScrapeRequest = writeScrapeRequest;
 module.exports.readScrapeRequest = readScrapeRequest;
 
-module.exports.writeScrapeResponce = writeScrapeResponce;
-module.exports.readScrapeResponce = readScrapeResponce;
+module.exports.writeScrapeResponse = writeScrapeResponse;
+module.exports.readScrapeResponse = readScrapeResponse;
 
 
-module.exports.readErrorResponce = readErrorResponce;
+module.exports.readErrorResponse = readErrorResponse;
 
-module.exports.isResponceError = isResponceError;
+module.exports.isResponseError = isResponseError;
 module.exports.getRequestAction = getRequestAction;
 module.exports.getRequestPeerId = getRequestPeerId;
-module.exports.getResponceAction = getResponceAction;
+module.exports.getResponseAction = getResponseAction;

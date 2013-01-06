@@ -28,7 +28,7 @@ describe('connect', function() {
     });
   });
 
-  describe('responce', function() {
+  describe('response', function() {
     var packet;
     it('should be at least 16 bytes');
     it('should read what was written');
@@ -75,7 +75,7 @@ describe('announce', function() {
       assert.equal(input.numWant, output.numWant);
     });
   });
-  describe('responce', function() {
+  describe('response', function() {
     var packet;
     it('should write a packet as expected', function() {
       var input = {
@@ -85,14 +85,14 @@ describe('announce', function() {
         seeders: generate.seeders(),
         peers: generate.peers()
       };
-      packet = bep15.writeAnnounceResponce(input);
+      packet = bep15.writeAnnounceResponse(input);
     });
     it('should be at least 20 bytes', function() {
       assert.ok((packet.length >= 20) ? true : false);
     });
     it('should read what was written', function() {
 
-      var output = bep15.readAnnounceResponce(packet);
+      var output = bep15.readAnnounceResponse(packet);
     });
   });
 });
@@ -104,7 +104,7 @@ describe('scrape', function() {
     it('should be at least x bytes');
     it('should read what was written');
   });
-  describe('responce', function() {
+  describe('response', function() {
     var packet;
     it('should be at least x bytes');
     it('should read what was written');
