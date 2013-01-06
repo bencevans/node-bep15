@@ -1,16 +1,20 @@
 
 var assert = require('assert');
-var packetMachine = require('./');
+var generator = require('./test-generator');
+var bep15 = require('./');
 
 describe('connect', function() {
 
-  var input;
+  var input = {
+    transactionId: generate.transactionId()
+  };
+
   var request;
 
   describe('request', function() {
 
     it('should write without any opts', function() {
-      request = packetMachine.writeConnectRequest();
+      request = bep15.writeConnectRequest(input);
     });
 
     it('should be at least 16 bytes', function () {
@@ -18,9 +22,9 @@ describe('connect', function() {
     });
 
     it('should read out equal transactionId from write to read', function () {
-      var packet = packetMachine.writeConnectRequest({transactionId:233});
-      var output = packetMachine.readConnectRequest(packet);
-      assert.equal(233, output.transactionId);
+      var packet = bep15.writeConnectRequest(input);
+      var output = bep15.readConnectRequest(packet);
+      assert.deepEqual(input.transactionId, output.transactionId);
     });
   });
 
@@ -35,32 +39,32 @@ describe('connect', function() {
 describe('announce', function() {
   describe('request', function() {
     var input = {
-      connectionId:new Buffer([1, 2, 3, 4, 5, 6, 7, 8]),
-      transactionId: 23,
-      infoHash:new Buffer('335990D615594B9BE409CCFEB95864E24EC702C7', 'hex'),
-      peerId:'1234567890123456789000000000000000000000',
-      downloaded:new Buffer([0,0,0,0,0,0,0,0]),
-      left:new Buffer([0,0,0,0,0,0,0,0]),
-      uploaded:new Buffer([0,0,0,0,0,0,0,0]),
-      event:1,
-      ipAddress:0,
-      key:23,
-      numWant:10,
-      port:10
+      connectionId: generate.connectionId(),
+      transactionId: generate.transactionId(),
+      infoHash: generate.infoHash(),
+      peerId: generate.peerId(),
+      downloaded: generate.downloaded(),
+      left: generate.left(),
+      uploaded: generate.uploaded(),
+      event: generate.event(),
+      ipAddress: generate.ipAddress(),
+      key: generate.key(),
+      numWant: generate.numWant(),
+      port: generate.port()
     };
     var packet;
     it('should write a packet without thrown error', function() {
-      packet = packetMachine.writeAnnounceRequest(input);
+      packet = bep15.writeAnnounceRequest(input);
     });
     it('should be at least 20 bytes', function() {
       assert.ok((packet.length >= 20) ? true : false);
     });
     it('should read what was written', function() {
-      var output = packetMachine.readAnnounceRequest(packet);
-      assert.equal(input.connectionId.toString('hex'), output.connectionId.toString('hex'));
+      var output = bep15.readAnnounceRequest(packet);
+      assert.deepEqual(input.connectionId, output.connectionId);
       assert.equal(1, output.action);
       assert.equal(input.transactionId, output.transactionId);
-      assert.equal(input.infoHash.toString('hex'), output.infoHash.toString('hex'));
+      assert.equal(input.infoHash, output.infoHash);
       assert.equal(input.peerId, output.peerId);
       assert.deepEqual(input.downloaded, output.downloaded);
       assert.deepEqual(input.left, output.left);
@@ -75,26 +79,20 @@ describe('announce', function() {
     var packet;
     it('should write a packet as expected', function() {
       var input = {
-        transactionId: 21,
-        interval: 20,
-        leechers: 10,
-        seeders: 10,
-        peers: [{
-          address: '10.10.10.10',
-          port: 3030
-        }, {
-          address: '11.11.11.11',
-          port: 8765
-        }]
+        transactionId: generate.transactionId(),
+        interval: generate.interval(),
+        leechers: generate.leechers(),
+        seeders: generate.seeders(),
+        peers: generate.peers()
       };
-      packet = packetMachine.writeAnnounceResponce(input);
+      packet = bep15.writeAnnounceResponce(input);
     });
     it('should be at least 20 bytes', function() {
       assert.ok((packet.length >= 20) ? true : false);
     });
     it('should read what was written', function() {
 
-      var output = packetMachine.readAnnounceResponce(packet);
+      var output = bep15.readAnnounceResponce(packet);
     });
   });
 });

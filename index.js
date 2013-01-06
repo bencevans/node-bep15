@@ -23,7 +23,7 @@ var writeConnectRequest = function(opts) {
 
   var connectionId = new Buffer([0x41, 0x72, 0x71, 0x01, 0x98, 0x0]);
   var action = 0;
-  var transactionId = Math.floor(Math.random() * 255);
+  var transactionId = opts.transactionId;
 
   var packet = new Buffer(16);
   connectionId.copy(packet, 0);
@@ -92,7 +92,7 @@ var writeAnnounceRequest = function(opts) {
   action.writeInt32BE(1, 0);
   var transaction_id = new Buffer(4);
   transaction_id.writeInt32BE(opts.transactionId, 0);
-  var info_hash = new Buffer(opts.infoHash);
+  var info_hash = new Buffer(opts.infoHash, 'hex');
   var peer_id = new Buffer(20);
   peer_id.write(opts.peerId, 0, opts.peerId.length, 'hex');
   var downloaded = opts.downloaded;
@@ -100,7 +100,7 @@ var writeAnnounceRequest = function(opts) {
   var uploaded = opts.uploaded;
   var event = new Buffer(4);
   event.writeInt32BE(opts.event || 0, 0);
-  var ip_address = new Buffer(4);
+  var ip_address = ipport.toBuffer(opts.ipAddress + ':0').slice(0, 4);
   var key = new Buffer(4);
   key.writeInt32BE(opts.key, 0);
   var num_want = new Buffer(4);
@@ -141,7 +141,7 @@ var readAnnounceRequest = function(packet) {
   output.left = packet.slice(64, 72);
   output.uploaded = packet.slice(72, 80);
   output.event = packet.readInt32BE(80);
-  output.ipAddress = 0;
+  output.ipAddress = ipport.toString(packet.slice(84, 90)).split(':')[0];
   output.key = packet.readInt32BE(88);
   output.numWant = packet.readInt32BE(92);
   //output.port = packet.readInt32BE(96);
