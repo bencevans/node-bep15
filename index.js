@@ -71,7 +71,7 @@ var readConnectResponse = function(packet) {
 
   var action = packet.readInt32BE(0);
   var transactionId = packet.readInt32BE(4);
-  var connectionId = packet.slice(8, 10);
+  var connectionId = packet.slice(8, 16);
 
   return {
     action:action,

@@ -29,9 +29,23 @@ describe('connect', function() {
   });
 
   describe('response', function() {
+    var input = {
+      transactionId: generate.transactionId(),
+      connectionId: generate.connectionId()
+    };
     var packet;
-    it('should be at least 16 bytes');
-    it('should read what was written');
+    var output;
+    it('should write packet without error thrown', function() {
+      packet = bep15.writeConnectResponse(input);
+    });
+    it('should read what was written', function() {
+      output = bep15.readConnectResponse(packet);
+      assert.deepEqual(input.transactionId, output.transactionId);
+      assert.deepEqual(input.connectionId, output.connectionId);
+    });
+    it('should set action as 1', function() {
+      output = bep15.readConnectResponse(packet);
+    });
   });
 });
 
