@@ -95,18 +95,18 @@ var writeAnnounceRequest = function(opts) {
   var info_hash = new Buffer(opts.infoHash, 'hex');
   var peer_id = new Buffer(20);
   peer_id.write(opts.peerId, 0, opts.peerId.length, 'hex');
-  var downloaded = opts.downloaded;
-  var left = opts.left;
-  var uploaded = opts.uploaded;
+  var downloaded = new Buffer([0,0,0,0,0,0,]);
+  var left = new Buffer([0,0,0,0,0,0,]);
+  var uploaded = new Buffer([0,0,0,0,0,0,]);
   var event = new Buffer(4);
   event.writeInt32BE(opts.event || 0, 0);
   var ip_address = ipport.toBuffer(opts.ipAddress + ':0').slice(0, 4);
   var key = new Buffer(4);
-  key.writeInt32BE(opts.key, 0);
+  key.writeInt32BE(1, 0);
   var num_want = new Buffer(4);
   num_want.writeInt32BE(opts.numWant || -1, 0);
   var port = new Buffer(2);
-  port.writeInt16BE(opts.port, 0);
+  port.writeInt16BE(3001, 0);
 
   var packet = new Buffer(98);
 
@@ -212,11 +212,11 @@ var writeScrapeRequest = function (opts) {
 
   opts.connectionId.copy(packet);
   packet.writeInt32BE(2, 8);
-  opts.transactionId.copy(packet, 12);
+  packet.writeInt32BE(opts.transactionId, 12);
 
   if(typeof opts.torrents == 'object') {
     for (var i = opts.torrents.length - 1; i >= 0; i--) {
-      opts.torrents[i].copy(packet, 16 + (20*i));
+      packet.write(opts.torrents[i], 16 + (20*i));
     }
   } else {
     opts.torrents.copy(packet, 16);
@@ -302,6 +302,19 @@ var readScrapeResponce = function (packet) {
 // Misc
 //
 
+var writeErrorResponce = function(opts) {
+
+  var message = new Buffer(opts.message);
+
+  var packet = new Buffer(8 + message.length);
+
+  var action = packet.writeInt32BE(3, 0);
+  var transactionId = packet.writeInt32BE(opts.transactionId, 4);
+  message.copy(packet, 8);
+
+  return packet;
+};
+
 var readErrorResponce = function(packet) {
 
   var action = packet.readInt32BE();
@@ -324,6 +337,12 @@ var isResponceError = function(packet) {
 var getRequestAction = function(packet) {
 
   return packet.readInt32BE(8);
+
+};
+
+var getRequestPeerId = function(packet) {
+
+  return packet.slice(36, 56).toString('hex');
 
 };
 
@@ -356,4 +375,5 @@ module.exports.readErrorResponce = readErrorResponce;
 
 module.exports.isResponceError = isResponceError;
 module.exports.getRequestAction = getRequestAction;
+module.exports.getRequestPeerId = getRequestPeerId;
 module.exports.getResponceAction = getResponceAction;
