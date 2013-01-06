@@ -216,7 +216,7 @@ var writeScrapeRequest = function (opts) {
 
   if(typeof opts.torrents == 'object') {
     for (var i = opts.torrents.length - 1; i >= 0; i--) {
-      packet.write(opts.torrents[i], 16 + (20*i));
+      packet.write(opts.torrents[i], 16 + (20*i), opts.torrents[i].length, 'hex');
     }
   } else {
     opts.torrents.copy(packet, 16);
@@ -230,7 +230,7 @@ var readScrapeRequest = function (packet) {
 
   var connectionId = packet.slice(0, 8);
   var action = packet.readInt32BE(8);
-  var transactionId = packet.slice(12, 16);
+  var transactionId = packet.readInt32BE(12);
   var torrents = [];
 
   var torrentCount = (packet.length - 16) / 20;

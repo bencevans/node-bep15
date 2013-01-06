@@ -114,9 +114,25 @@ describe('announce', function() {
 
 describe('scrape', function() {
   describe('request', function() {
+    var input = {
+      connectionId: generate.connectionId(),
+      transactionId: generate.transactionId(),
+      torrents: [generate.infoHash()]
+    };
     var packet;
-    it('should be at least x bytes');
-    it('should read what was written');
+    var output;
+    it('should write packet withput throwing errors', function() {
+      packet = bep15.writeScrapeRequest(input);
+    });
+    it('should read what was written', function() {
+      output = bep15.readScrapeRequest(packet);
+      assert.deepEqual(input.connectionId, output.connectionId);
+      assert.deepEqual(input.transactionId, output.transactionId);
+      assert.deepEqual(input.torrents, output.torrents);
+    });
+    it('should set action to 2', function() {
+      assert.equal(2, output.action);
+    });
   });
   describe('response', function() {
     var packet;
