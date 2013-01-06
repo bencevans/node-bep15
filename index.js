@@ -95,14 +95,14 @@ var writeAnnounceRequest = function(opts) {
   var info_hash = new Buffer(opts.infoHash, 'hex');
   var peer_id = new Buffer(20);
   peer_id.write(opts.peerId, 0, opts.peerId.length, 'hex');
-  var downloaded = new Buffer([0,0,0,0,0,0,]);
-  var left = new Buffer([0,0,0,0,0,0,]);
-  var uploaded = new Buffer([0,0,0,0,0,0,]);
+  var downloaded = opts.downloaded;
+  var left = opts.left;
+  var uploaded = opts.uploaded;
   var event = new Buffer(4);
   event.writeInt32BE(opts.event || 0, 0);
   var ip_address = ipport.toBuffer(opts.ipAddress + ':0').slice(0, 4);
   var key = new Buffer(4);
-  key.writeInt32BE(1, 0);
+  key.writeInt32BE(opts.key, 0);
   var num_want = new Buffer(4);
   num_want.writeInt32BE(opts.numWant || -1, 0);
   var port = new Buffer(2);
