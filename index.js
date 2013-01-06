@@ -136,15 +136,35 @@ var readAnnounceRequest = function(packet) {
   output.action = packet.readInt32BE(8);
   output.transactionId = packet.readInt32BE(12);
   output.infoHash = packet.slice(16, 36).toString('hex');
-  output.peerId = packet.slice(36, 56).toString('hex');
-  output.downloaded = packet.slice(56, 64);
-  output.left = packet.slice(64, 72);
-  output.uploaded = packet.slice(72, 80);
-  output.event = packet.readInt32BE(80);
-  output.ipAddress = ipport.toString(packet.slice(84, 90)).split(':')[0];
-  output.key = packet.readInt32BE(88);
-  output.numWant = packet.readInt32BE(92);
-  //output.port = packet.readInt32BE(96);
+
+  if(packet.length <= 56)
+    output.peerId = packet.slice(36, 56).toString('hex');
+
+  if(packet.length <= 64)
+    output.downloaded = packet.slice(56, 64);
+
+  if(packet.length <= 72)
+    output.left = packet.slice(64, 72);
+
+  if(packet.length <= 80)
+    output.uploaded = packet.slice(72, 80);
+
+  if(packet.length <= 84)
+    output.event = packet.readInt32BE(80);
+
+  if(packet.length <= 88)
+    output.ipAddress = ipport.toString(packet.slice(84, 90)).split(':')[0];
+
+  if(packet.length <= 92)
+    output.key = packet.readInt32BE(88);
+
+  if(packet.length <= 96)
+    output.numWant = packet.readInt32BE(92);
+  else
+    output.numWant = -1;
+
+  if(packet.length >= 100)
+    output.port = packet.readInt32BE(96);
 
   return output;
 
