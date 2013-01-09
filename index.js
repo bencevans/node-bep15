@@ -336,11 +336,9 @@ var writeErrorResponse = function(opts) {
 };
 
 var readErrorResponse = function(packet) {
-
-  var action = packet.readInt32BE();
+  var action = packet.readInt32BE(0);
   var transactionId = packet.readInt32BE(4);
-  var message = packet.slice(8, packet.lenth - 8);
-
+  var message = packet.slice(8, packet.lenth).toString();
   return {
     action:action,
     transactionId:transactionId,
