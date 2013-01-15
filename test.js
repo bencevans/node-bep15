@@ -6,14 +6,15 @@ var bep15 = require('./');
 describe('connect', function() {
 
   var input = {
-    transactionId: generate.transactionId()
+    transactionId: generate.transactionId(),
+    connectionId: generate.connectionId()
   };
 
   var request;
 
   describe('request', function() {
 
-    it('should write without any opts', function() {
+    it('should write without error', function() {
       request = bep15.writeConnectRequest(input);
     });
 
