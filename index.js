@@ -440,3 +440,5 @@ module.exports.getRequestAction = getRequestAction;
 module.exports.getRequestPeerId = getRequestPeerId;
 module.exports.getResponseAction = getResponseAction;
 module.exports.getResponseTransactionId = getResponseTransactionId;
+module.exports.readRequest = readRequest;
+module.exports.readResponse = readResponse;
