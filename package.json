@@ -17,7 +17,8 @@
   ],
   "author": "Ben Evans <ben@bensbit.co.uk> (http://bensbit.co.uk)",
   "dependencies": {
-    "ipport": "~0.1.0"
+    "ipport": "~0.1.0",
+    "underscore": "~1.4.3"
   },
   "devDependencies": {
     "mocha": "~1.7.4"
