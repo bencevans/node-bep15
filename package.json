@@ -1,6 +1,6 @@
 {
   "name": "bep15",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "read and write UDP (BEP 15) tracker packets",
   "main": "index.js",
   "scripts": {
