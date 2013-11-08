@@ -16,6 +16,10 @@
     "tracker"
   ],
   "author": "Ben Evans <ben@bensbit.co.uk> (http://bensbit.co.uk)",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bencevans/node-bep15.git"
+  },
   "dependencies": {
     "ipport": "~0.1.0",
     "underscore": "~1.5.2"
